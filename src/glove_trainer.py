@@ -10,11 +10,10 @@ logging.basicConfig(level=logging.INFO)
 
 
 def generate_input_text(iter_tokens, output_fname):
-    input_text = ""
-    for tokens in iter_tokens():
-        input_text += " ".join(tokens) + " "
     with open(output_fname, "w") as fo:
-        fo.write(input_text)
+        for tokens in iter_tokens():
+            input_text = " ".join(tokens) + " "
+            fo.write(input_text)
 
 
 def train_glove_model(output_model_path, iter_docs, tokenizer, size=50, window=15, min_count=5, epoch=25):
