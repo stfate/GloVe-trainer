@@ -1,4 +1,3 @@
-
 from abc import ABC, abstractmethod
 import bz2
 from pathlib import Path
@@ -8,39 +7,60 @@ import os
 import re
 import subprocess
 import sys
-
 import nltk
 
 import lucia.textio as textio
+import lucia.tokenizer as tokenizer
 
 
 class TextDatasetBase(ABC):
+    """
+    a bass class for text dataset
+    
+    Attributes
+    ----------
+    """
     @abstractmethod
     def iter_docs(self):
+        """
+        iterator of documents
+        
+        Parameters
+        ----------
+        """
         yield None
 
 
-class ArtistReviewDataset(TextDatasetBase):
-    def __init__(self):
-        self.root_path = None
-
+class JapaneseText8Dataset(TextDatasetBase):
+    """
+    dataset for japanese text8
+    
+    Attributes
+    ----------
+    """
     def iter_docs(self, dataset_path):
-        self.root_path = Path(dataset_path)
-        dataset_flist = self.root_path.glob("contents/*/*.html.txt")
-        meta = json.load(open(self.root_path / "metadata.json", "r"))
-        for fn in dataset_flist:
-            fid = fn.parent.stem
-            title = meta[fid]
-            reader = textio.TextReader(fn)
-            lines = reader.read()
-            yield {"title": title, "body": lines}
+        """
+        get iterator of texts in one document
+        
+        Parameters
+        ----------
+        dataset_path: string
+            path to dataset
+        """
+        with open(dataset_path, "r", encoding="utf-8") as fi:
+            text = fi.read()
+            sentence_tokenizer = tokenizer.JapaneseSentenceTokenizer()
+            sentences = sentence_tokenizer.tokenize(text)
+            for i,sentence in enumerate(sentences):
+                sentence = sentence.replace(" ", "")
+                yield {"title": i, "body": sentence}
 
 
 class WikipediaDataset(TextDatasetBase):
     def __init__(self):
         self.__src_dir = os.path.dirname( os.path.abspath(__file__) )
         self.__wikiextractor_path = os.path.normpath("wikiextractor/WikiExtractor.py")
-        self.__wikiextractor_cmd = os.path.join(self.__src_dir, "..", self.__wikiextractor_path)
+        self.__wikiextractor_cmd = os.path.join(self.__src_dir, self.__wikiextractor_path)
         self.__wikiextractor_cmd = os.path.normpath(self.__wikiextractor_cmd)
 
     def iter_docs(self, file_path, dir_path):
@@ -52,7 +72,6 @@ class WikipediaDataset(TextDatasetBase):
         dir_path : string
             Directory path where extracted text files are put
         """
-
         extracted_file_path_pattern = os.path.join(dir_path, "*", "*.bz2")
         extracted_file_paths = glob(extracted_file_path_pattern)
         if len(extracted_file_paths) == 0:
@@ -91,14 +110,45 @@ class WikipediaDataset(TextDatasetBase):
                             lines.append(line)
 
 
+class ArtistReviewDataset(TextDatasetBase):
+    def __init__(self):
+        self.root_path = None
+
+    def iter_docs(self, dataset_path):
+        """
+        get iterator of texts in one document
+        
+        Parameters
+        ----------
+        dataset_path: string
+            path to dataset
+        """
+        self.root_path = Path(dataset_path)
+        dataset_flist = self.root_path.glob("contents/*/*.html.txt")
+        meta = json.load(open(self.root_path / "metadata.json", "r"))
+        for fn in dataset_flist:
+            fid = fn.parent.stem
+            title = meta[fid]
+            reader = textio.TextReader(fn)
+            lines = reader.read()
+            yield {"title": title, "body": lines}
+
+
 class MARDDataset(TextDatasetBase):
     def __init__(self):
         self.root_path = None
 
     def iter_docs(self, dataset_path):
+        """
+        get iterator of texts in one document
+        
+        Parameters
+        ----------
+        dataset_path: string
+            path to dataset
+        """
         self.root_path = Path(dataset_path)
-        # reviews_json_fn = self.root_path / "mard_reviews.json"
-        reviews_json_fn = self.root_path / "mard_reviews_normalized.json"
+        reviews_json_fn = self.root_path / "mard_reviews.json"
         with open(reviews_json_fn, "r") as fi:
             for line in fi:
                 review_dict = json.loads(line, encoding="utf-8")

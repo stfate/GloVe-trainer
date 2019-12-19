@@ -5,7 +5,6 @@ import logging
 import os
 import tempfile
 
-
 logging.basicConfig(level=logging.INFO)
 
 
@@ -37,7 +36,7 @@ def train_glove_model(output_model_path, iter_docs, tokenizer, size=50, window=1
     """
     # setup paths to GloVe binaries 
     cur_path = Path(__file__)
-    bin_path = cur_path.parents[1] / "bin"
+    bin_path = cur_path.parent / "bin"
     vocab_count_bin = bin_path / "vocab_count"
     cooccur_bin = bin_path / "cooccur"
     shuffle_bin = bin_path / "shuffle"
