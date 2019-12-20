@@ -12,6 +12,8 @@ import nltk
 import lucia.textio as textio
 import lucia.tokenizer as tokenizer
 
+from memory_profiler import profile
+
 
 class TextDatasetBase(ABC):
     """
@@ -63,6 +65,7 @@ class WikipediaDataset(TextDatasetBase):
         self.__wikiextractor_cmd = os.path.join(self.__src_dir, self.__wikiextractor_path)
         self.__wikiextractor_cmd = os.path.normpath(self.__wikiextractor_cmd)
 
+    @profile
     def iter_docs(self, file_path, dir_path):
         """
         Parameters
