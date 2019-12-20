@@ -13,6 +13,7 @@ Wikipediaもしくは任意のテキストコーパスから[GloVe](https://nlp.
 他の依存パッケージは`requirements.txt`を参照．
 
 
+
 # Setup
 
 ```bash
