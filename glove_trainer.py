@@ -5,7 +5,7 @@ import logging
 import os
 import tempfile
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.INFO, format="[%(asctime)s] %(levelname)s:%(message)s", datefmt="%Y/%m/%d %H:%M:%S")
 
 
 def generate_input_text(iter_tokens, output_fname):
