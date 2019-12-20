@@ -8,14 +8,14 @@ import tempfile
 logging.basicConfig(level=logging.INFO, format="[%(asctime)s] %(levelname)s:%(message)s", datefmt="%Y/%m/%d %H:%M:%S")
 
 
-def generate_input_text(iter_tokens, output_fname):
+def generate_input_text(iter_docs, output_fname):
     with open(output_fname, "w") as fo:
-        for tokens in iter_tokens():
+        for tokens in iter_docs():
             input_text = " ".join(tokens) + " "
             fo.write(input_text)
 
 
-def train_glove_model(output_model_path, iter_docs, tokenizer, size=50, window=15, min_count=5, epoch=25):
+def train_glove_model(output_model_path, iter_docs, size=50, window=15, min_count=5, epoch=25):
     """
     Parameters
     ----------
@@ -51,8 +51,7 @@ def train_glove_model(output_model_path, iter_docs, tokenizer, size=50, window=1
 
         # generate input text
         logging.info("generate input text file...")
-        iter_tokens = tokenizer.get_tokens_iterator(iter_docs, normalize=True)
-        generate_input_text(iter_tokens, input_fn)
+        generate_input_text(iter_docs, input_fn)
 
         # vocab_count
         logging.info("vocab_count...")
