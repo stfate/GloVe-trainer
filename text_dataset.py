@@ -8,8 +8,8 @@ import re
 import subprocess
 import sys
 
-import lucia.textio as textio
-import lucia.tokenizer as tokenizer
+import ymh_nlp.textio as textio
+import ymh_nlp.tokenizer as tokenizer
 
 from memory_profiler import profile
 

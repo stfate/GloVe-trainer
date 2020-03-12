@@ -4,7 +4,7 @@ import re
 import functools
 import MeCab
 
-import lucia.tokenizer as tokenizer
+import ymh_nlp.tokenizer as tokenizer
 
 ptn_number = re.compile(r"([0-9]|[０-９])+")
 
